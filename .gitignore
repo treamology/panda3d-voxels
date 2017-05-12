@@ -1,0 +1,5 @@
+build
+*.c
+*.pyd
+*.pyc
+*.idea
