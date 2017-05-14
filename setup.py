@@ -4,5 +4,5 @@ from Cython.Build import cythonize
 setup(
     name = "Panda3D Voxels",
     packages = find_packages(),
-    ext_modules = cythonize("test.pyx")
+    ext_modules = cythonize([])
 )
