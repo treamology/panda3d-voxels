@@ -4,7 +4,7 @@ from panda3d.core import WindowProperties
 from panda3d.core import loadPrcFileData
 loadPrcFileData('', """
                 win-size 1920 1080
-                sync-video 0
+                sync-video 1
                 show-frame-rate-meter 1
                 fullscreen 1""")
 
@@ -19,12 +19,9 @@ class Main(ShowBase):
         # Disable the default camera controls
         base.disable_mouse()
 
-        # Controls for capturing and releasing the mouse
-        self.accept("escape", self.release_mouse)
-        self.accept("mouse1", self.capture_mouse)
-
         self.current_props = base.win.get_properties()
 
+        # Setup mouse and keyboard controls
         self.setup_controls()
 
         # Load a test model
@@ -33,9 +30,32 @@ class Main(ShowBase):
         test_model.reparent_to(base.render)
 
     def setup_controls(self):
-        taskMgr.add(self.mouse_move_task, "MouseMovementTask")
+        # Controls for capturing and releasing the mouse
+        self.accept("escape", self.release_mouse)
+        self.accept("mouse1", self.capture_mouse)
 
-    def mouse_move_task(self, task):
+        # Movement controls
+        self.accept("w", self.update_key, ["w", True])
+        self.accept("w-up", self.update_key, ["w", False])
+        self.accept("s", self.update_key, ["s", True])
+        self.accept("s-up", self.update_key, ["s", False])
+        self.accept("a", self.update_key, ["a", True])
+        self.accept("a-up", self.update_key, ["a", False])
+        self.accept("d", self.update_key, ["d", True])
+        self.accept("d-up", self.update_key, ["d", False])
+        self.accept("q", self.update_key, ["q", True])
+        self.accept("q-up", self.update_key, ["q", False])
+        self.accept("e", self.update_key, ["e", True])
+        self.accept("e-up", self.update_key, ["e", False])
+
+        self.key_state = {"w": False, "s": False, "a": False, "d": False, "q": False, "e": False}
+        taskMgr.add(self.controls_task, "MouseMovementTask")
+
+    def update_key(self, key: str, state: bool):
+        self.key_state[key] = state
+
+    def controls_task(self, task):
+        dt = globalClock.getDt()
         if self.capturing_mouse:
             # Be sure mouse is inside the window, or else panda crashes if you try to get the mouse position.
             x, y = 0, 0
@@ -50,11 +70,24 @@ class Main(ShowBase):
             # Change camera angle based on mouse movement, being sure to constrain the pitch to keep the camera from
             # going upside down
             p = base.camera.get_p()
-            if p + (y * 20) <= 90 and p - (y * 20) >= -90:
-                base.camera.set_p(base.camera, y * 20)
-            base.camera.set_h(base.camera, -x * 20)
+            if p + (y * 40) <= 90 and p - (y * 40) >= -90:
+                base.camera.set_p(base.camera, y * 40)
+            base.camera.set_h(base.camera, -x * 40)
 
             base.camera.set_r(0)
+
+        if self.key_state["w"]:
+            base.camera.setY(base.camera, 30 * dt)
+        if self.key_state["s"]:
+            base.camera.setY(base.camera, -30 * dt)
+        if self.key_state["d"]:
+            base.camera.setX(base.camera, 30 * dt)
+        if self.key_state["a"]:
+            base.camera.setX(base.camera, -30 * dt)
+        if self.key_state["q"]:
+            base.camera.setZ(base.camera, 30 * dt)
+        if self.key_state["e"]:
+            base.camera.setZ(base.camera, -30 * dt)
 
         return task.cont
 
