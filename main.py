@@ -1,12 +1,8 @@
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import WindowProperties
-
 from panda3d.core import loadPrcFileData
-loadPrcFileData('', """
-                win-size 1920 1080
-                sync-video 1
-                show-frame-rate-meter 1
-                fullscreen 1""")
+
+from voxel.world import World
 
 
 class Main(ShowBase):
@@ -28,6 +24,11 @@ class Main(ShowBase):
         test_model = loader.load_model("panda.egg")
         test_model.set_pos(0, 40, -5)
         test_model.reparent_to(base.render)
+
+        self.generate_new_world()
+
+    def generate_new_world(self):
+        self.world = World()
 
     def setup_controls(self):
         # Controls for capturing and releasing the mouse
@@ -108,5 +109,11 @@ class Main(ShowBase):
         self.capturing_mouse = False
 
 if __name__ == "__main__":
+    loadPrcFileData('', """
+                    win-size 1280 720
+                    sync-video 1
+                    show-frame-rate-meter 1
+                    fullscreen 0""")
+
     main = Main()
     main.run()
