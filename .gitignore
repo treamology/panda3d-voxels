@@ -1,5 +1,8 @@
-build
-*.c
 *.pyd
 *.pyc
 *.idea
+voxel_native/scripts
+voxel_native/win_*
+voxel_native/CMakeLists.txt
+voxel_native/build.py
+voxel_native/.gitignore
