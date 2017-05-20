@@ -2,7 +2,7 @@ from direct.showbase.ShowBase import ShowBase
 from panda3d.core import WindowProperties
 from panda3d.core import loadPrcFileData
 
-from voxel.world import World
+from voxel import world
 
 
 class Main(ShowBase):
@@ -25,10 +25,7 @@ class Main(ShowBase):
         test_model.set_pos(0, 40, -5)
         test_model.reparent_to(base.render)
 
-        self.generate_new_world()
-
-    def generate_new_world(self):
-        self.world = World()
+        self.world = world.generate_new_world()
 
     def setup_controls(self):
         # Controls for capturing and releasing the mouse
