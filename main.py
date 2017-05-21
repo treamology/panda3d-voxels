@@ -2,8 +2,7 @@ from direct.showbase.ShowBase import ShowBase
 from panda3d.core import WindowProperties
 from panda3d.core import loadPrcFileData
 
-#from voxel import world
-import voxel
+from voxel import Chunk
 
 class Main(ShowBase):
 
@@ -24,6 +23,8 @@ class Main(ShowBase):
         test_model = loader.load_model("panda.egg")
         test_model.set_pos(0, 40, -5)
         test_model.reparent_to(base.render)
+
+        self.chunkList = [[Chunk() for i in range(20)] for j in range(20)]
 
         #self.world = world.generate_new_world()
 

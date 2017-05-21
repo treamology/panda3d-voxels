@@ -21,7 +21,6 @@ def build_modules():
 
     cmd = [sys.executable, "-B", "-m", "voxel_native.build"]
     try:
-        #output = subprocess.check_output(cmd, stderr=sys.stderr, shell=True)
         output = subprocess.run(cmd, stderr=sys.stderr, stdout=sys.stdout, check=True)
     except subprocess.CalledProcessError as errorMsg:
         print(errorMsg)
