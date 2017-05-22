@@ -3,6 +3,7 @@ from panda3d.core import WindowProperties
 from panda3d.core import loadPrcFileData
 
 from voxel import Chunk
+from voxel import World
 
 class Main(ShowBase):
 
@@ -24,8 +25,10 @@ class Main(ShowBase):
         test_model.set_pos(0, 40, -5)
         test_model.reparent_to(base.render)
 
-        self.chunkList = [[Chunk() for i in range(20)] for j in range(20)]
-
+        self.world = World()
+        self.world.reparentTo(base.render)
+        base.render.ls()
+        print(taskMgr)
         #self.world = world.generate_new_world()
 
     def setup_controls(self):
@@ -109,7 +112,7 @@ class Main(ShowBase):
 if __name__ == "__main__":
     loadPrcFileData('', """
                     win-size 1280 720
-                    sync-video 1
+                    sync-video 0
                     show-frame-rate-meter 1
                     fullscreen 0""")
 

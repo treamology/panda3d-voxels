@@ -1,13 +1,11 @@
-#ifndef BLOCK_H
-#define BLOCK_H
+#pragma once
 
 #include <cinttypes>
 #include "pandabase.h"
+#include "BlockType.h"
 
 class Block {
 PUBLISHED:
-	uint8_t type = 1;
+	BlockType type = BlockType_NotAir;
 	Block() {}
 };
-
-#endif

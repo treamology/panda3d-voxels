@@ -27,7 +27,7 @@ def build_modules():
         print("Error building the native modules.")
         sys.exit(-1)
 
-    shutil.move("voxel_native/voxel.pyd", "voxel.pyd")
+    shutil.move("voxel_native/voxel_native.pyd", "voxel/voxel_native.pyd")
 
 
 if __name__ == "__main__":
