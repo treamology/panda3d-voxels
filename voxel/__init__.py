@@ -1,2 +1,1 @@
-from .voxel_native import Chunk, Block, ChunkGenManager
-from .world import World
+from .voxel_native import Chunk, Block, World

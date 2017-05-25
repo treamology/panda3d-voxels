@@ -6,3 +6,4 @@ voxel_native/win_*
 voxel_native/CMakeLists.txt
 voxel_native/build.py
 voxel_native/.gitignore
+voxel_native/.vs

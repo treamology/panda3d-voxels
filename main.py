@@ -25,11 +25,8 @@ class Main(ShowBase):
         test_model.set_pos(0, 40, -5)
         test_model.reparent_to(base.render)
 
-        self.world = World()
-        self.world.reparentTo(base.render)
-        base.render.ls()
-        print(taskMgr)
-        #self.world = world.generate_new_world()
+        self.world = World(16, 16, "blah", "blah")
+        self.world.reparent_to(base.render)
 
     def setup_controls(self):
         # Controls for capturing and releasing the mouse
@@ -112,7 +109,7 @@ class Main(ShowBase):
 if __name__ == "__main__":
     loadPrcFileData('', """
                     win-size 1280 720
-                    sync-video 0
+                    sync-video 1
                     show-frame-rate-meter 1
                     fullscreen 0""")
 
