@@ -28,8 +28,11 @@ def build_modules():
         print("Error building the native modules.")
         sys.exit(-1)
 
-    shutil.move("voxel_native/voxel_native.pyd", "voxel/voxel_native.pyd")
-
+    from voxel_native.scripts.common import is_macos, is_windows, is_linux
+    if is_windows():
+        shutil.move("voxel_native/voxel_native.pyd", "voxel/voxel_native.pyd")
+    elif is_macos() or is_linux():
+        shutil.move("voxel_native/voxel_native.so", "voxel/voxel_native.so")
 
 if __name__ == "__main__":
     build_modules()
