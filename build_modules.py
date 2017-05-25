@@ -17,6 +17,7 @@ def check_for_module_builder():
 def build_modules():
     print("Building native modules...")
 
+    os.chdir(os.path.split(os.path.realpath(__file__))[0])
     check_for_module_builder()
 
     cmd = [sys.executable, "-B", "-m", "voxel_native.build"]
