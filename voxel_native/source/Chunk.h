@@ -2,11 +2,18 @@
 
 #include "pandabase.h"
 #include "nodePath.h"
-#include "block.h"
 
-class Chunk : public NodePath {
+#include "referenceCount.h"
+#include "block.h"
+#include "chunk_block_data.h"
+
+class ChunkGenerationTask;
+
+class Chunk : public ReferenceCount {
+	friend class ChunkGenerationTask;
+
 private:
-	Block ***block_array;
+	ChunkBlockData blocks;
 
 public:
 	static const int CHUNK_WIDTH = 16;
@@ -18,12 +25,12 @@ PUBLISHED:
 	MAKE_PROPERTY(CHUNK_WIDTH, get_chunk_width);
 	INLINE static int get_chunk_height();
 	MAKE_PROPERTY(CHUNK_HEIGHT, get_chunk_height);
-	Chunk(int test);
-	Chunk();
 
-	~Chunk();
+	Chunk();
+	Chunk(ChunkBlockData blocks);
 
 	//void generate_geometry();
+	
 };
 
 #include "Chunk.I"

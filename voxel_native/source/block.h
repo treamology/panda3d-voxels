@@ -7,5 +7,5 @@
 class Block {
 PUBLISHED:
 	BlockType type = BlockType_NotAir;
-	Block() {}
+	Block(BlockType type);
 };

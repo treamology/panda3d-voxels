@@ -25,8 +25,17 @@ class Main(ShowBase):
         test_model.set_pos(0, 40, -5)
         test_model.reparent_to(base.render)
 
-        self.world = World(16, 16, "blah", "blah")
-        self.world.reparent_to(base.render)
+        self.accept("chunk_progress", self.chunk_progress)
+        self.world = World(32, 32, "blah", "chunk_progress")
+        #self.world.generate()
+        #self.world.reparent_to(base.render)
+
+    def chunk_progress(self, progress):
+        pass
+        #print("Chunk progress" + str(progress))
+
+    def generate(self):
+        self.world.generate()
 
     def setup_controls(self):
         # Controls for capturing and releasing the mouse
@@ -46,6 +55,7 @@ class Main(ShowBase):
         self.accept("q-up", self.update_key, ["q", False])
         self.accept("e", self.update_key, ["e", True])
         self.accept("e-up", self.update_key, ["e", False])
+        self.accept("g", self.generate)
 
         self.key_state = {"w": False, "s": False, "a": False, "d": False, "q": False, "e": False}
         taskMgr.add(self.controls_task, "MouseMovementTask")
@@ -111,7 +121,9 @@ if __name__ == "__main__":
                     win-size 1280 720
                     sync-video 1
                     show-frame-rate-meter 1
-                    fullscreen 0""")
+                    fullscreen 0
+                    want-pstats 0
+                    threading-model /Draw""")
 
     main = Main()
     main.run()
