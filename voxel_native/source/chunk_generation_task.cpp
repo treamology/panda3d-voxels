@@ -11,15 +11,18 @@ ChunkGenerationTask::ChunkGenerationTask(PT(Chunk) chunk, int chunk_x, int chunk
 	//set_done_event(done_event_name);
 }
 
+
+/**
+ * Generates the block data for a single chunk. Creates a new chunk instance
+ * if none was provided.
+ */
 AsyncTask::DoneStatus ChunkGenerationTask::do_task() {
 	if (!gen_chunk) {
 		gen_chunk = new Chunk();
 	}
 	for (int i = 0; i < Chunk::CHUNK_WIDTH; i++) {
 		for (int j = 0; j < Chunk::CHUNK_WIDTH; j++) {
-			for (int k = 0; k < Chunk::CHUNK_HEIGHT; k++) {
-				gen_chunk->blocks(i, j, k).type = BlockType_NotAir;
-			}
+			gen_chunk->blocks(i, j, 0).type = BlockType_NotAir;
 		}
 	}
 

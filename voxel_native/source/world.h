@@ -7,14 +7,19 @@
 
 #include "chunk.h"
 
+/**
+ * The base node of the voxel world. All chunks of the world
+ * are under this node in the scene graph
+ */
 class World : public NodePath {
 private:
 	AsyncTaskManager &task_manager;
 	EventHandler &event_handler;
 
 	bool task_chain_initialized = false;
-	vector<vector<Chunk>> chunks;
 	int num_chunks_finished = 0;
+
+	vector<vector<Chunk>> chunks;
 
 PUBLISHED:
 	unsigned size_x, size_y;

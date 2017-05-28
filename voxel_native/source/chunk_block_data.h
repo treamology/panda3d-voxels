@@ -7,6 +7,11 @@
 #include "block.h"
 #include "block_type.h"
 
+/**
+ * A convenience class for storing the block data of a chunk.
+ * Instead of using a 3D vector, which can be inefficient when changing
+ * the size of it, a single vector is used and is abstracted away.
+ */
 class ChunkBlockData {
 private:
 	size_t dx, dy, dz;

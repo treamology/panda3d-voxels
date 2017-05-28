@@ -20,6 +20,10 @@ World::World(unsigned size_x, unsigned size_y, string done_event_name, string pr
 	}
 }
 
+/**
+ * Generates the world based on the given world size by adding ChunkGenerationTasks
+ * to the multithreaded task chain.
+ */
 void World::generate() {
 	event_handler.add_hook("done_generating_chunk", chunk_done_callback, this);
 
@@ -40,16 +44,22 @@ void World::chunk_done_callback(const Event *event, void *data) {
 	throw_event(self->progress_event_name, self->num_chunks_finished);
 }
 
+/**
+ * Sets up the task chain inferring the number of cores.
+ */
 void World::setup_task_chain() {
 	unsigned num_threads = std::thread::hardware_concurrency();
-	if (num_threads == 0) num_threads = 1;
+	if (num_threads != 0) num_threads -= 1; // Giving a thread count of 1 spawns an additional thread, 0 is the main thread.
 	World::setup_task_chain(num_threads);
 }
 
+/**
+ * Sets up the task chain with the specified number of cores.
+ */
 void World::setup_task_chain(unsigned num_threads) {
 	AsyncTaskManager &task_manager = *AsyncTaskManager::get_global_ptr();
 	AsyncTaskChain *task_chain = task_manager.make_task_chain("ChunkGenTaskChain");
-	task_chain->set_num_threads(7);
+	task_chain->set_num_threads(num_threads);
 	task_chain->set_timeslice_priority(true);
 	//task_chain->set_frame_budget(1.0/100.0f);
 	//task_chain->set_frame_sync(true);

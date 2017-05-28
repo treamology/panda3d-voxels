@@ -9,6 +9,10 @@
 
 class ChunkGenerationTask;
 
+/**
+ * Stores the block and mesh information for a group of blocks in the world.
+ */
+
 class Chunk : public ReferenceCount {
 	friend class ChunkGenerationTask;
 
@@ -28,8 +32,6 @@ PUBLISHED:
 
 	Chunk();
 	Chunk(ChunkBlockData blocks);
-
-	//void generate_geometry();
 	
 };
 
