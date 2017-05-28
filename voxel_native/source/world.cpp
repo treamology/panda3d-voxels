@@ -12,7 +12,8 @@ World::World(unsigned size_x, unsigned size_y, string done_event_name, string pr
 	size_x(size_x),
 	size_y(size_y),
 	done_event_name(done_event_name),
-	progress_event_name(progress_event_name)
+	progress_event_name(progress_event_name),
+	chunks(size_x, std::vector<std::shared_ptr<Chunk>>(size_y))
 {
 	if (!task_chain_initialized) {
 		setup_task_chain();
@@ -30,7 +31,7 @@ void World::generate() {
 	for (unsigned i = 0; i < size_x; i++) {
 		for (unsigned j = 0; j < size_y; j++) {
 			PT(ChunkGenerationTask) task;
-			task = new ChunkGenerationTask(i, j, "done_generating_chunk");
+			task = new ChunkGenerationTask(chunks[i][j].get(), i, j, "done_generating_chunk");
 			task->set_task_chain("ChunkGenTaskChain");
 			//task->set_sort(i + j);
 			task_manager.add(task);

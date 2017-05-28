@@ -16,13 +16,13 @@ class ChunkGenerationTask : public AsyncTask {
 public:
 	ALLOC_DELETED_CHAIN(ChunkGenerationTask);
 
-private:
-	PT(Chunk) gen_chunk;
 	int chunk_x, chunk_y;
+	Chunk* gen_chunk;
+private:
 
 PUBLISHED:
-	ChunkGenerationTask(int chunk_x, int chunk_y, string done_event_name);
-	ChunkGenerationTask(PT(Chunk) chunk, int chunk_x, int chunk_y, string done_event_name);
+	//ChunkGenerationTask(int chunk_x, int chunk_y, string done_event_name);
+	ChunkGenerationTask(Chunk* chunk, int chunk_x, int chunk_y, string done_event_name);
 
 protected:
 	virtual DoneStatus do_task();

@@ -19,7 +19,7 @@ private:
 	bool task_chain_initialized = false;
 	int num_chunks_finished = 0;
 
-	vector<vector<Chunk>> chunks;
+	std::vector<std::vector<std::shared_ptr<Chunk>>> chunks;
 
 PUBLISHED:
 	unsigned size_x, size_y;
