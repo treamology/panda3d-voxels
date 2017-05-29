@@ -19,7 +19,7 @@ private:
 	bool task_chain_initialized = false;
 	int num_chunks_finished = 0;
 
-	std::vector<std::vector<std::shared_ptr<Chunk>>> chunks;
+	std::vector<std::vector<PT(Chunk)>> chunks;
 
 PUBLISHED:
 	unsigned size_x, size_y;
@@ -30,7 +30,9 @@ public:
 
 PUBLISHED:
 	World(unsigned size_x, unsigned size_y, string done_event_name, string progress_event_name);
+	~World();
 
+	Chunk& get_chunk(int chunk_x, int chunk_y);
 	void generate();
 	static void setup_task_chain();
 	static void setup_task_chain(unsigned num_threads);

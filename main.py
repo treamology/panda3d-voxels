@@ -27,7 +27,6 @@ class Main(ShowBase):
 
         self.accept("chunk_progress", self.chunk_progress)
         self.world = World(32, 32, "blah", "chunk_progress")
-        #self.world.generate()
         self.world.reparent_to(base.render)
 
     def chunk_progress(self, progress):
@@ -36,8 +35,9 @@ class Main(ShowBase):
     def generate(self):
         self.world.generate()
 
-    def deleteWorld(self):
+    def delete_world(self):
         self.world.removeNode()
+        del self.world
 
     def setup_controls(self):
         # Controls for capturing and releasing the mouse
@@ -58,7 +58,7 @@ class Main(ShowBase):
         self.accept("e", self.update_key, ["e", True])
         self.accept("e-up", self.update_key, ["e", False])
         self.accept("g", self.generate)
-        self.accept("d", self.deleteWorld)
+        self.accept("d", self.delete_world)
 
         self.key_state = {"w": False, "s": False, "a": False, "d": False, "q": False, "e": False}
         taskMgr.add(self.controls_task, "MouseMovementTask")

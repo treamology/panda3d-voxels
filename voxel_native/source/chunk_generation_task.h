@@ -2,6 +2,7 @@
 
 #include "pandabase.h"
 #include "asyncTask.h"
+#include "pointerTo.h"
 
 #include "chunk.h"
 #include "chunk_block_data.h"
@@ -17,12 +18,11 @@ public:
 	ALLOC_DELETED_CHAIN(ChunkGenerationTask);
 
 	int chunk_x, chunk_y;
-	Chunk* gen_chunk;
+	Chunk& gen_chunk;
 private:
 
-PUBLISHED:
-	//ChunkGenerationTask(int chunk_x, int chunk_y, string done_event_name);
-	ChunkGenerationTask(Chunk* chunk, int chunk_x, int chunk_y, string done_event_name);
+public:
+	ChunkGenerationTask(Chunk& chunk, int chunk_x, int chunk_y, string done_event_name);
 
 protected:
 	virtual DoneStatus do_task();

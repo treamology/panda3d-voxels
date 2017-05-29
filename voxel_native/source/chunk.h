@@ -17,9 +17,12 @@ class Chunk : public ReferenceCount {
 	friend class ChunkGenerationTask;
 
 private:
-	ChunkBlockData blocks;
+	PT(ChunkBlockData) blocks;
 
 public:
+	void init_blocks();
+	bool blocks_initialized = false;
+
 	static const int CHUNK_WIDTH = 16;
 	static const int CHUNK_HEIGHT = 256;
 
@@ -31,7 +34,9 @@ PUBLISHED:
 	MAKE_PROPERTY(CHUNK_HEIGHT, get_chunk_height);
 
 	Chunk();
-	Chunk(ChunkBlockData blocks);
+	Chunk(PT(ChunkBlockData) blocks);
+
+	~Chunk();
 	
 };
 

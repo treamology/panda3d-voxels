@@ -10,6 +10,13 @@
 #include "geom.h"
 
 
-Chunk::Chunk() : blocks(CHUNK_WIDTH, CHUNK_WIDTH, CHUNK_HEIGHT) {}
+Chunk::Chunk() {}
 
-Chunk::Chunk(ChunkBlockData blocks) : blocks(blocks) {}
+Chunk::Chunk(PT(ChunkBlockData) blocks) : blocks(blocks) {}
+
+void Chunk::init_blocks() {
+	blocks = new ChunkBlockData(CHUNK_WIDTH, CHUNK_WIDTH, CHUNK_HEIGHT);
+	blocks_initialized = true;
+}
+
+Chunk::~Chunk() { }
