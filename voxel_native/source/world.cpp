@@ -7,25 +7,31 @@
 #include "world.h"
 
 World::World(unsigned size_x, unsigned size_y, string done_event_name, string progress_event_name) : NodePath("World"),
-	task_manager(*AsyncTaskManager::get_global_ptr()),
-	event_handler(*EventHandler::get_global_event_handler()),
-	size_x(size_x),
-	size_y(size_y),
-	done_event_name(done_event_name),
-	progress_event_name(progress_event_name)
+task_manager(*AsyncTaskManager::get_global_ptr()),
+event_handler(*EventHandler::get_global_event_handler()),
+size_x(size_x),
+size_y(size_y),
+done_event_name(done_event_name),
+progress_event_name(progress_event_name)
 {
-	chunks = std::vector<std::vector<PT(Chunk)>>(size_x, std::vector<PT(Chunk)>(size_y));
-	
+	/*chunks = std::vector<std::vector<PT(Chunk)>>(size_x, std::vector<PT(Chunk)>(size_y));
+
 	for (int x = 0; x < size_x; x++) {
 		auto col = std::vector<PT(Chunk)>(size_y);
 		col.resize(size_y);
 		for (int y = 0; y < size_y; y++) {
-			//col[y] = new Chunk();
-			
 			col[y] = new Chunk();
 		}
 
 		chunks[x] = col;
+	}*/
+
+	chunks = std::map<ChunkCoord, PT(Chunk)>();
+
+	for (int x = 0; x < size_x; x++) {
+		for (int y = 0; y < size_y; y++) {
+			chunks[ChunkCoord(x, y)] = new Chunk();
+		}
 	}
 
 	if (!task_chain_initialized) {
@@ -36,11 +42,6 @@ World::World(unsigned size_x, unsigned size_y, string done_event_name, string pr
 
 World::~World() {}
 
-Chunk& World::get_chunk(int chunk_x, int chunk_y)
-{
-	return *chunks[chunk_x][chunk_y];
-}
-
 /**
  * Generates the world based on the given world size by adding ChunkGenerationTasks
  * to the multithreaded task chain.
@@ -48,14 +49,19 @@ Chunk& World::get_chunk(int chunk_x, int chunk_y)
 void World::generate() {
 	event_handler.add_hook("done_generating_chunk", chunk_done_callback, this);
 
-	for (unsigned i = 0; i < size_x; i++) {
-		for (unsigned j = 0; j < size_y; j++) {
-			PT(ChunkGenerationTask) task = new ChunkGenerationTask(*chunks[i][j], i, j, "done_generating_chunk");
-			task->set_task_chain("ChunkGenTaskChain");
-			//task->set_sort(i + j);
-			task_manager.add(task);
-		}
+	for (auto& chunkKeyVal : chunks) {
+		PT(ChunkGenerationTask) task = new ChunkGenerationTask(*chunkKeyVal.second, chunkKeyVal.first.first, chunkKeyVal.first.second, "done_generating_chunk");
+		task->set_task_chain("ChunkGenTaskChain");
+		task_manager.add(task);
 	}
+
+	//for (unsigned i = 0; i < size_x; i++) {
+	//	for (unsigned j = 0; j < size_y; j++) {
+	//		PT(ChunkGenerationTask) task = new ChunkGenerationTask(*chunks[i][j], i, j, "done_generating_chunk");
+	//		task->set_task_chain("ChunkGenTaskChain");
+	//		task_manager.add(task);
+	//	}
+	//}
 }
 
 void World::chunk_done_callback(const Event *event, void *data) {

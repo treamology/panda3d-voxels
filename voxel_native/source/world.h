@@ -12,6 +12,10 @@
  * are under this node in the scene graph
  */
 class World : public NodePath {
+public:
+	typedef std::pair<int, int> ChunkCoord;
+	static void chunk_done_callback(const Event *event, void *data);
+
 private:
 	AsyncTaskManager &task_manager;
 	EventHandler &event_handler;
@@ -19,20 +23,17 @@ private:
 	bool task_chain_initialized = false;
 	int num_chunks_finished = 0;
 
-	std::vector<std::vector<PT(Chunk)>> chunks;
+	//std::vector<std::vector<PT(Chunk)>> chunks;
+	std::map<ChunkCoord, PT(Chunk)> chunks;
 
 PUBLISHED:
 	unsigned size_x, size_y;
 	string done_event_name, progress_event_name;
 
-public:
-	static void chunk_done_callback(const Event *event, void *data);
-
 PUBLISHED:
 	World(unsigned size_x, unsigned size_y, string done_event_name, string progress_event_name);
 	~World();
 
-	Chunk& get_chunk(int chunk_x, int chunk_y);
 	void generate();
 	static void setup_task_chain();
 	static void setup_task_chain(unsigned num_threads);

@@ -8,6 +8,7 @@
 #include "chunk_block_data.h"
 
 class ChunkGenerationTask;
+class MeshGenerationTask;
 
 /**
  * Stores the block and mesh information for a group of blocks in the world.
@@ -15,6 +16,7 @@ class ChunkGenerationTask;
 
 class Chunk : public ReferenceCount {
 	friend class ChunkGenerationTask;
+	friend class MeshGenerationTask;
 
 private:
 	PT(ChunkBlockData) blocks;
