@@ -5,6 +5,8 @@ from panda3d.core import loadPrcFileData
 from voxel import Chunk
 from voxel import World
 
+import math
+
 class Main(ShowBase):
 
     capturing_mouse = False
@@ -17,8 +19,12 @@ class Main(ShowBase):
 
         self.current_props = base.win.get_properties()
 
+        self.mouse_scale = 0.05
+        self.win_size_x, self.win_size_y = self.current_props.get_x_size(), self.current_props.get_y_size()
         # Setup mouse and keyboard controls
         self.setup_controls()
+
+        self.accept("window-event", self.window_updated)
 
         # Load a test model
         test_model = loader.load_model("panda.egg")
@@ -26,18 +32,24 @@ class Main(ShowBase):
         test_model.reparent_to(base.render)
 
         self.accept("chunk_progress", self.chunk_progress)
-        self.world = World(32, 32, "blah", "chunk_progress")
+        self.world = World(64, 64, "blah", "chunk_progress")
+        self.world.set_render_mode_wireframe()
         self.world.reparent_to(base.render)
 
     def chunk_progress(self, progress):
         print("Chunk progress" + str(progress))
 
     def generate(self):
-        self.world.generate()
+        self.world.start_initial_generation()
 
     def delete_world(self):
         self.world.removeNode()
         del self.world
+
+    def window_updated(self, win):
+        super(Main, self).windowEvent(win)  # Send the window event up the chain
+        self.current_props = base.win.get_properties()
+        self.win_size_x, self.win_size_y = self.current_props.get_x_size(), self.current_props.get_y_size()
 
     def setup_controls(self):
         # Controls for capturing and releasing the mouse
@@ -58,7 +70,7 @@ class Main(ShowBase):
         self.accept("e", self.update_key, ["e", True])
         self.accept("e-up", self.update_key, ["e", False])
         self.accept("g", self.generate)
-        self.accept("d", self.delete_world)
+        #self.accept("d", self.delete_world)
 
         self.key_state = {"w": False, "s": False, "a": False, "d": False, "q": False, "e": False}
         taskMgr.add(self.controls_task, "MouseMovementTask")
@@ -72,19 +84,31 @@ class Main(ShowBase):
             # Be sure mouse is inside the window, or else panda crashes if you try to get the mouse position.
             x, y = 0, 0
             if self.mouseWatcherNode.has_mouse():
-                x, y = self.mouseWatcherNode.get_mouse_x(), self.mouseWatcherNode.get_mouse_y()
+                # x, y = self.mouseWatcherNode.get_mouse_x(), self.mouseWatcherNode.get_mouse_y()
+                # x *= self.current_props.get_x_size()
+                # y *= self.current_props.get_y_size()
+                # length = math.sqrt(self.current_props.get_x_size() ** 2 + self.current_props.get_y_size() ** 2)
+                # x /= length
+                # y /= length
+                pointer = base.win.get_pointer(0)
+                x, y = pointer.x, pointer.y
 
             # Move the pointer back to the center of the screen
             base.win.move_pointer(0,
-                                  int(self.current_props.get_x_size() / 2),
-                                  int(self.current_props.get_y_size() / 2))
+                                  int(self.win_size_x / 2),
+                                  int(self.win_size_y / 2))
 
+            x -= int(self.win_size_x / 2)
+            y -= int(self.win_size_y / 2)
+
+            print(x, y)
+            
             # Change camera angle based on mouse movement, being sure to constrain the pitch to keep the camera from
             # going upside down
             p = base.camera.get_p()
-            if p + (y * 40) <= 90 and p - (y * 40) >= -90:
-                base.camera.set_p(base.camera, y * 40)
-            base.camera.set_h(base.camera, -x * 40)
+            if p + (y * self.mouse_scale) <= 90 and p - (y * self.mouse_scale) >= -90:
+                base.camera.set_p(base.camera, -y * self.mouse_scale)
+            base.camera.set_h(base.camera, -x * self.mouse_scale)
 
             base.camera.set_r(0)
 
@@ -125,8 +149,7 @@ if __name__ == "__main__":
                     sync-video 1
                     show-frame-rate-meter 1
                     fullscreen 0
-                    want-pstats 0
-                    threading-model /Draw""")
+                    want-pstats 0""")
 
     main = Main()
     main.run()
