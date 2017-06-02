@@ -13,28 +13,34 @@
  */
 class World : public NodePath {
 public:
-	typedef std::pair<int, int> ChunkCoord;
-	static void chunk_done_callback(const Event *event, void *data);
+	static void initial_chunk_load_event(const Event *event, void *data);
+	static void mesh_done_callback(const Event *event, void *data);
 
 private:
 	AsyncTaskManager &task_manager;
 	EventHandler &event_handler;
 
 	bool task_chain_initialized = false;
-	int num_chunks_finished = 0;
+	bool initial_load = true;
+	int initial_chunks_finished = 0;
+
+	int size_x, size_y;
+	int initial_num_chunks;
 
 	//std::vector<std::vector<PT(Chunk)>> chunks;
 	std::map<ChunkCoord, PT(Chunk)> chunks;
 
+	void start_initial_mesh_generation();
 PUBLISHED:
-	unsigned size_x, size_y;
 	string done_event_name, progress_event_name;
 
 PUBLISHED:
-	World(unsigned size_x, unsigned size_y, string done_event_name, string progress_event_name);
+	World(int size_x, int size_y, string done_event_name, string progress_event_name);
 	~World();
 
-	void generate();
+	Chunk& get_chunk(int x, int y);
+
+	void start_initial_generation();
 	static void setup_task_chain();
 	static void setup_task_chain(unsigned num_threads);
 };

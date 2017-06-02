@@ -1,0 +1,4 @@
+[submodule "P3DModuleBuilder"]
+	path = P3DModuleBuilder
+	url = C:\\Users\\Donny\\PycharmProjects\\PandaVoxels\\P3DModuleBuilder
+	branch = configurable

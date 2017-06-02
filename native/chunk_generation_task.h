@@ -19,9 +19,7 @@ public:
 
 	int chunk_x, chunk_y;
 	Chunk& gen_chunk;
-private:
 
-public:
 	ChunkGenerationTask(Chunk& chunk, int chunk_x, int chunk_y, string done_event_name);
 
 protected:

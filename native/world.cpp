@@ -4,9 +4,10 @@
 #include "throw_event.h"
 
 #include "chunk_generation_task.h"
+#include "mesh_generation_task.h"
 #include "world.h"
 
-World::World(unsigned size_x, unsigned size_y, string done_event_name, string progress_event_name) : NodePath("World"),
+World::World(int size_x, int size_y, string done_event_name, string progress_event_name) : NodePath("World"),
 task_manager(*AsyncTaskManager::get_global_ptr()),
 event_handler(*EventHandler::get_global_event_handler()),
 size_x(size_x),
@@ -14,6 +15,7 @@ size_y(size_y),
 done_event_name(done_event_name),
 progress_event_name(progress_event_name)
 {
+	initial_num_chunks = size_x * size_y;
 	/*chunks = std::vector<std::vector<PT(Chunk)>>(size_x, std::vector<PT(Chunk)>(size_y));
 
 	for (int x = 0; x < size_x; x++) {
@@ -30,7 +32,9 @@ progress_event_name(progress_event_name)
 
 	for (int x = 0; x < size_x; x++) {
 		for (int y = 0; y < size_y; y++) {
-			chunks[ChunkCoord(x, y)] = new Chunk();
+			auto coord = ChunkCoord(x, y);
+			chunks[coord] = new Chunk();
+			chunks[coord]->chunk_coord = coord;
 		}
 	}
 
@@ -40,14 +44,18 @@ progress_event_name(progress_event_name)
 	}
 }
 
+Chunk& World::get_chunk(int x, int y) {
+	return *chunks[ChunkCoord(x, y)];
+}
+
 World::~World() {}
 
 /**
  * Generates the world based on the given world size by adding ChunkGenerationTasks
  * to the multithreaded task chain.
  */
-void World::generate() {
-	event_handler.add_hook("done_generating_chunk", chunk_done_callback, this);
+void World::start_initial_generation() {
+	event_handler.add_hook("done_generating_chunk", initial_chunk_load_event, this);
 
 	for (auto& chunkKeyVal : chunks) {
 		PT(ChunkGenerationTask) task = new ChunkGenerationTask(*chunkKeyVal.second, chunkKeyVal.first.first, chunkKeyVal.first.second, "done_generating_chunk");
@@ -64,10 +72,33 @@ void World::generate() {
 	//}
 }
 
-void World::chunk_done_callback(const Event *event, void *data) {
+void World::start_initial_mesh_generation() {
+	event_handler.add_hook("done_generating_chunk_mesh", mesh_done_callback, this);
+
+	for (auto& chunkKeyVal : chunks) {
+		PT(MeshGenerationTask) mesh_task = new MeshGenerationTask(*chunkKeyVal.second, "done_generating_chunk_mesh");
+		mesh_task->set_task_chain("ChunkGenTaskChain");
+		task_manager.add(mesh_task);
+	}
+}
+
+void World::mesh_done_callback(const Event *event, void *data) {
 	World *self = (World *)data;
-	self->num_chunks_finished++;
-	throw_event(self->progress_event_name, self->num_chunks_finished);
+	MeshGenerationTask& task = (MeshGenerationTask& )*event->get_parameter(0).get_typed_ref_count_value();
+	task.chunk.mesh_NP.remove_node();
+	task.chunk.mesh_NP = NodePath(task.finished_geom_node);
+	task.chunk.mesh_NP.set_pos(task.chunk.chunk_coord.first * Chunk::CHUNK_WIDTH, task.chunk.chunk_coord.second * Chunk::CHUNK_WIDTH, 0);
+	task.chunk.mesh_NP.reparent_to(*self);
+}
+
+void World::initial_chunk_load_event(const Event *event, void *data) {
+	World *self = (World *)data;
+	self->initial_chunks_finished++;
+	throw_event(self->progress_event_name, self->initial_chunks_finished);
+	if (self->initial_chunks_finished == self->initial_num_chunks) {
+		throw_event(self->done_event_name);
+		self->start_initial_mesh_generation();
+	}
 }
 
 /**
