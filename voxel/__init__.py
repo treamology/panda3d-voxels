@@ -1,1 +1,1 @@
-from .voxel_native import Chunk, World
+from voxel_native import Chunk, World

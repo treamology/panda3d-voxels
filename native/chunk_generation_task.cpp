@@ -22,7 +22,7 @@ AsyncTask::DoneStatus ChunkGenerationTask::do_task() {
 		gen_chunk.init_blocks();
 	}
 
-	ChunkBlockData &blocksptr = *(gen_chunk.blocks);
+	ChunkBlockData &blocksptr = *gen_chunk.blocks;
 	for (int i = 0; i < Chunk::CHUNK_WIDTH; i++) {
 		for (int j = 0; j < Chunk::CHUNK_WIDTH; j++) {
 			blocksptr(i, j, 0).type = BlockType_NotAir;

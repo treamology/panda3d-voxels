@@ -100,8 +100,6 @@ class Main(ShowBase):
 
             x -= int(self.win_size_x / 2)
             y -= int(self.win_size_y / 2)
-
-            print(x, y)
             
             # Change camera angle based on mouse movement, being sure to constrain the pitch to keep the camera from
             # going upside down
