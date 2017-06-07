@@ -147,7 +147,8 @@ if __name__ == "__main__":
                     sync-video 1
                     show-frame-rate-meter 1
                     fullscreen 0
-                    want-pstats 0""")
+                    want-pstats 0
+                    depth-bits 24""")
 
     main = Main()
     main.run()
